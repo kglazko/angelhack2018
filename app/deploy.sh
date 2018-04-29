@@ -24,3 +24,6 @@ tar -xf temp.tar
 rm temp.tar
 
 zip -r ~/Downloads/00000.zip *
+aws lambda update-function-code --function-name homelessness --zip-file fileb://$HOME/Downloads/00000.zip --publish  --profile personal
+
+say deployment done
