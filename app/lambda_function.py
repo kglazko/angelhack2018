@@ -4,6 +4,7 @@ import os
 import time
 from collections import namedtuple
 
+import boto3
 import requests
 from sqlalchemy import create_engine, Column, Integer, Sequence, String
 from sqlalchemy.ext.declarative import declarative_base
@@ -116,6 +117,54 @@ def search_darcel(query):
     return [DarcelLink(name=x['name'], url=url_str.format(x['id'])) for x in darcel_resources]
 
 
+def start_fargate(email, zip, position, password):
+    session = boto3.session.Session()
+    client = session.client('ecs')
+    client.run_task(
+        cluster='default',
+        taskDefinition='autoindeed:1',
+        launchType='FARGATE',
+        networkConfiguration={
+            'awsvpcConfiguration': {
+                'subnets': [
+                    'subnet-dbe96fd4',
+                ],
+                'securityGroups': [
+                    'sg-0a99a043'
+                ],
+            }
+        },
+        overrides={
+            'containerOverrides': [
+                {
+                    'name': 'indeed',
+                    'environment': [
+                        {
+                            'name': 'EMAIL_ADDRESS',
+                            'value': email,
+                        },
+                        {
+                            'name': 'ZIP',
+                            'value': zip,
+                        },
+                        {
+                            'name': 'POSITION',
+                            'value': position,
+                        },
+                        {
+                            'name': 'PASSWORD',
+                            'value': password,
+                        },
+                        {
+                            'name': 'SELENIUM_DRIVER_HOSTNAME',
+                            'value': '127.0.0.1',
+                        }
+                    ]
+                }
+            ]
+        }
+    )
+
 def indeed(intent_request):
     session_attributes = intent_request['sessionAttributes'] if intent_request['sessionAttributes'] is not None else {}
     phone_number = intent_request['userId']
@@ -130,7 +179,11 @@ def indeed(intent_request):
         zip = intent_request['currentIntent']['slots']['zip']
         password = intent_request['currentIntent']['slots']['password']
         position = intent_request['currentIntent']['slots']['position']
-        # TODO: pass this to Fargate
+        try:
+            start_fargate(email_address, zip, position, password)
+        except Exception as e:  # TODO: remove on good test
+            return elicit_intent(session_attributes,
+                                 message=e.message)
         return elicit_intent(session_attributes, message="You have been put in the queue for automatic job applications. Application confirmation emails for {} will arrive shortly to {}. Good luck!".format(position, email_address))
     return delegate(session_attributes, intent_request['currentIntent']['slots'])
 
@@ -219,3 +272,4 @@ def lambda_handler(event, context):
     # }
 
     return dispatch(event)
+
