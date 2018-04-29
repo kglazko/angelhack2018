@@ -135,6 +135,7 @@ def start_fargate(email, zip, position, password):
             }
         },
         overrides={
+            'taskRoleArn': 'arn:aws:iam::436052868155:role/ecsTaskExecutionRole',
             'containerOverrides': [
                 {
                     'name': 'indeed',
