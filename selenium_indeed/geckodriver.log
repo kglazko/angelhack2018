@@ -3014,3 +3014,39 @@ See /usr/include/servers/bootstrap_defs.h for the error codes.
 1524987719878	Marionette	WARN	TLS certificate errors will be ignored for this session
 2018-04-29 00:42:00.434 plugin-container[6455:1148893] *** CFMessagePort: bootstrap_register(): failed 1100 (0x44c) 'Permission denied', port = 0xab2b, name = 'com.apple.tsm.portname'
 See /usr/include/servers/bootstrap_defs.h for the error codes.
+1525024966675	geckodriver	INFO	geckodriver 0.20.1
+1525024966681	geckodriver	INFO	Listening on 127.0.0.1:61982
+1525025115219	geckodriver	INFO	Listening on 127.0.0.1:62678
+1525025143012	geckodriver	INFO	Listening on 127.0.0.1:62806
+1525025190335	geckodriver	INFO	Listening on 127.0.0.1:63050
+1525025191396	geckodriver::marionette	INFO	Starting browser /Applications/Firefox.app/Contents/MacOS/firefox-bin with args ["-marionette"]
+1525025192096	Marionette	INFO	Enabled via --marionette
+2018-04-29 11:06:33.025 plugin-container[22907:3939277] *** CFMessagePort: bootstrap_register(): failed 1100 (0x44c) 'Permission denied', port = 0x14e03, name = 'com.apple.tsm.portname'
+See /usr/include/servers/bootstrap_defs.h for the error codes.
+1525025193556	Marionette	INFO	Listening on port 63063
+1525025193614	Marionette	WARN	TLS certificate errors will be ignored for this session
+2018-04-29 11:06:33.987 plugin-container[22915:3939392] *** CFMessagePort: bootstrap_register(): failed 1100 (0x44c) 'Permission denied', port = 0xaa43, name = 'com.apple.tsm.portname'
+See /usr/include/servers/bootstrap_defs.h for the error codes.
+JavaScript error: , line 0: TypeError: NetworkError when attempting to fetch resource.
+JavaScript error: , line 0: TypeError: NetworkError when attempting to fetch resource.
+JavaScript error: , line 0: TypeError: NetworkError when attempting to fetch resource.
+JavaScript error: , line 0: TypeError: NetworkError when attempting to fetch resource.
+JavaScript error: , line 0: TypeError: NetworkError when attempting to fetch resource.
+JavaScript error: , line 0: TypeError: NetworkError when attempting to fetch resource.
+*** UTM:SVC TimerManager:registerTimer called after profile-before-change notification. Ignoring timer registration for id: telemetry_modules_ping
+1525026173466	geckodriver	INFO	Listening on 127.0.0.1:52124
+1525026174544	geckodriver::marionette	INFO	Starting browser /Applications/Firefox.app/Contents/MacOS/firefox-bin with args ["-marionette"]
+1525026175190	Marionette	INFO	Enabled via --marionette
+2018-04-29 11:22:56.189 plugin-container[26986:3968182] *** CFMessagePort: bootstrap_register(): failed 1100 (0x44c) 'Permission denied', port = 0xae03, name = 'com.apple.tsm.portname'
+See /usr/include/servers/bootstrap_defs.h for the error codes.
+1525026176600	Marionette	INFO	Listening on port 52137
+1525026176644	Marionette	WARN	TLS certificate errors will be ignored for this session
+2018-04-29 11:22:57.114 plugin-container[26990:3968288] *** CFMessagePort: bootstrap_register(): failed 1100 (0x44c) 'Permission denied', port = 0xab3f, name = 'com.apple.tsm.portname'
+See /usr/include/servers/bootstrap_defs.h for the error codes.
+JavaScript error: , line 0: TypeError: NetworkError when attempting to fetch resource.
+JavaScript error: , line 0: TypeError: NetworkError when attempting to fetch resource.
+JavaScript error: , line 0: TypeError: NetworkError when attempting to fetch resource.
+JavaScript error: , line 0: TypeError: NetworkError when attempting to fetch resource.
+JavaScript error: , line 0: TypeError: NetworkError when attempting to fetch resource.
+JavaScript error: , line 0: TypeError: NetworkError when attempting to fetch resource.
+*** UTM:SVC TimerManager:registerTimer called after profile-before-change notification. Ignoring timer registration for id: telemetry_modules_ping

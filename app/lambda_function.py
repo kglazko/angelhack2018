@@ -127,6 +127,7 @@ def indeed(intent_request):
 
     if all(intent_request['currentIntent']['slots'].values()):
         email_address = intent_request['currentIntent']['slots']['email_address']
+        zip = intent_request['currentIntent']['slots']['zip']
         password = intent_request['currentIntent']['slots']['password']
         position = intent_request['currentIntent']['slots']['position']
         # TODO: pass this to Fargate

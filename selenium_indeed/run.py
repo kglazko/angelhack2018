@@ -1,13 +1,31 @@
+import os
+
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
 from selenium.common.exceptions import TimeoutException
+from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.common.exceptions import ElementNotInteractableException
 import time
 
-driver = webdriver.Firefox()
+
+EMAIL_ADDRESS = os.environ.get('EMAIL_ADDRESS')
+PASSWORD = os.environ.get('PASSWORD')
+POSITION = os.environ.get('POSITION')
+ZIP = os.environ.get('ZIP')
+SELENIUM_DRIVER_HOSTNAME = os.environ.get('SELENIUM_DRIVER_HOSTNAME',
+                                          'selenium')
+DEBUG = os.environ.get('DEBUG', 'true')
+
+if DEBUG.lower() == 'false':
+    driver = webdriver.Remote(
+        command_executor='http://{}:4444/wd/hub'.format(SELENIUM_DRIVER_HOSTNAME),
+        desired_capabilities=DesiredCapabilities.FIREFOX)
+else:
+    driver = webdriver.Firefox()
+
 driver.get("http://www.indeed.com")
 driver.maximize_window()
 assert "Indeed" in driver.title
@@ -16,25 +34,30 @@ assert "Indeed" in driver.title
 login = driver.find_element_by_xpath('/html/body/div/div[1]/nav/ul[2]/li[2]/a')
 login.click()
 email = driver.find_element_by_xpath('//*[@id="signin_email"]')
-email.send_keys("testytest1@mailinator.com")
+email.send_keys(EMAIL_ADDRESS)
 password = driver.find_element_by_xpath('//*[@id="signin_password"]')
-password.send_keys("testtest1")
+password.send_keys(PASSWORD)
 submit = driver.find_element_by_xpath('/html/body/div/div/div/section/form/button')
 submit.click()
 
 #Job Search
+time.sleep(5)
 title = driver.find_element_by_xpath('//*[@id="text-input-what"]')
-title.send_keys('truck')
+title.send_keys(POSITION)
 location = driver.find_element_by_xpath('//*[@id="text-input-where"]')
-location.send_keys(Keys.COMMAND + "a")
+if DEBUG.lower() == 'false':
+    location.send_keys(Keys.CONTROL+ "a")
+else:
+    location.send_keys(Keys.COMMAND + "a")
 location.send_keys(Keys.DELETE)
-location.send_keys('94041')
+location.send_keys(ZIP)
 find_submit = driver.find_element_by_xpath('/html/body/div/div[2]/div[2]/div/form/div[3]/button')
 find_submit.click()
 
 #Auto-apply
 job_iter = 0
 time.sleep(3)
+driver.maximize_window()
 page_iter = len(driver.find_elements_by_class_name('iaLabel'))
 
 for job in range(0, page_iter+2):
@@ -44,6 +67,7 @@ for job in range(0, page_iter+2):
     print job_iter
     print page_iter
     if page_iter == job_iter:
+        time.sleep(2)
         next_button = driver.find_element_by_class_name('np')
         next_button.click()
         time.sleep(2)
