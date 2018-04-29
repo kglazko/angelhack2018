@@ -10,7 +10,7 @@ We want to seamlessly connect homeless individuals within our community to the r
 
 ## Our technology
 In order to be as accessible to as many as possible, we are available through both SMS and web-based chat.
-* We are powered by Twilio, AWS Lex, AWS Fargate, and utilizing Python and Selenium.
+* We are powered by Twilio, AWS Lex, AWS Lex + UI (https://github.com/aws-samples/aws-lex-web-ui/tree/master/lex-web-ui#dependencies-and-build-setup), AWS Fargate, and utilizing Python and Selenium.
 
 ## Next steps
 * Plug in and bot-ify more resources
