@@ -15,6 +15,7 @@ import time
 
 from sqlalchemy import create_engine, Column, Integer, Sequence, String
 from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import sessionmaker
 
 logger = logging.getLogger()
 logger.setLevel(logging.DEBUG)
@@ -26,7 +27,7 @@ DATABASE_PASSWORD = os.environ.get("DATABASE_PASSWORD")
 
 
 engine = create_engine('mysql+pymysql://{}:{}@{}/homeless'.format(DATABASE_USERNAME, DATABASE_PASSWORD, DATABASE_HOST), pool_recycle=3600)
-
+Session = sessionmaker(bind=engine)
 Base = declarative_base()
 
 
@@ -36,7 +37,7 @@ class User(Base):
     id = Column(Integer, Sequence('user_id_seq'), primary_key=True)
     first_name = Column(String(32))
     last_name = Column(String(32))
-    phone_number = Column(String(14))
+    phone_number = Column(String(14))  # TODO: optimize key on phone_number
 
 Base.metadata.create_all(engine)
 
@@ -102,14 +103,41 @@ def delegate(session_attributes, slots):
         }
     }
 
+def elicit_intent(session_attributes, message=None):
+    response = {
+        'sessionAttributes': session_attributes,
+        'dialogAction': {
+            'type': 'ElicitIntent',
+        }
+    }
+    if message is not None:
+        response['dialogAction']['message'] = {
+            'contentType': 'PlainText',
+            'content': message,
+        }
+    return response
 
 def onboarding(intent_request):
     session_attributes = intent_request['sessionAttributes'] if intent_request['sessionAttributes'] is not None else {}
+    phone_number = intent_request['userId']
+
+    session = Session()
+    user = session.query(User).filter_by(phone_number=phone_number).one_or_none()
+    if user is not None:
+        return elicit_intent(session_attributes, message="Welcome back {}! If you want to apply to jobs type job.".format(user.first_name))
+
     if intent_request['currentIntent']['slots']['wants_to_enroll'] == 'No':
+        # user does not want to enroll
         return close(session_attributes, "Fulfilled",
-                     "When you're ready, we'll be here for you." + json.dumps(intent_request['requestAttributes']))
+                     "When you're ready, we'll be here for you.")
     if all(intent_request['currentIntent']['slots'].values()):
-        return close_empty(session_attributes, "Fulfilled")  # TODO: save to db
+        # all user inputs filled out
+        first_name = intent_request['currentIntent']['slots']['first_name']
+        last_name = intent_request['currentIntent']['slots']['last_name']
+        new_user = User(first_name=first_name, last_name=last_name, phone_number=phone_number)
+        session.add(new_user)
+        session.commit()
+        return close_empty(session_attributes, "Fulfilled")
     return delegate(session_attributes, intent_request['currentIntent']['slots'])
 
 

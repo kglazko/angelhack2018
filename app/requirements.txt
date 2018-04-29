@@ -1,2 +1,2 @@
-sqlalchemy
+sqlalchemy==1.2.7
 PyMySQL
