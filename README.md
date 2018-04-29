@@ -1,1 +1,12 @@
-# angelhack2018
+# angelhack2018: Project HelpConnect
+
+## Our mission
+We want to seamlessly connect homeless individuals within our community to the resources, organizations, and jobs that could help them. 
+
+## Our technology
+In order to be as accessible to as many as possible, we are available through both SMS and web-based chat.
+* We are powered by Twilio, AWS Lex, AWS Fargate, and utilizing Python and Selenium.
+
+## Next steps
+* Plug in and bott-ify more resources
+* Create a chatbot-based mentorship/advocate program
