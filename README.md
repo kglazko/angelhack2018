@@ -8,5 +8,5 @@ In order to be as accessible to as many as possible, we are available through bo
 * We are powered by Twilio, AWS Lex, AWS Fargate, and utilizing Python and Selenium.
 
 ## Next steps
-* Plug in and bott-ify more resources
+* Plug in and bot-ify more resources
 * Create a chatbot-based mentorship/advocate program
