@@ -5,7 +5,7 @@ We want to seamlessly connect homeless individuals within our community to the r
 
 ## V1.0 Chatbot Features
 * Onboarding module: Basic onboarding and information collection
-* Resources module: Integration with Hello Darnell
+* Resources module: Integration with Ask Darcel
 * Job apply module: SMS/chat-based automated job application through Indeed
 
 ## Our technology
