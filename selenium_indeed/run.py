@@ -24,7 +24,7 @@ submit.click()
 
 #Job Search
 title = driver.find_element_by_xpath('//*[@id="text-input-what"]')
-title.send_keys('intern')
+title.send_keys('truck')
 location = driver.find_element_by_xpath('//*[@id="text-input-where"]')
 location.send_keys(Keys.COMMAND + "a")
 location.send_keys(Keys.DELETE)
@@ -37,34 +37,46 @@ job_iter = 0
 time.sleep(3)
 page_iter = len(driver.find_elements_by_class_name('iaLabel'))
 
-for job in range(0, page_iter):
+for job in range(0, page_iter+2):
     jobs = []
     time.sleep(2)
     jobs = driver.find_elements_by_class_name('iaLabel')
     print job_iter
     print page_iter
-    jobs[job_iter].click()
-    timeout = 5
-    try:
-        element_present = EC.presence_of_element_located((By.CLASS_NAME, 'indeed-apply-button-label'))
-        WebDriverWait(driver, timeout).until(element_present)
-        apply_button = driver.find_element_by_class_name('indeed-apply-button-label')
-        apply_button.click()
-        time.sleep(3)
-
-        driver.get('https://apply.indeed.com/indeedapply/s/resumeApply')
-        continue_button = driver.find_element_by_xpath('//*[@id="form-action-continue"]')
-        continue_button.click()
-        #driver.get('https://apply.indeed.com/indeedapply/s/resumeApply?page=1')
+    if page_iter == job_iter:
+        next_button = driver.find_element_by_class_name('np')
+        next_button.click()
         time.sleep(2)
+        driver.window_handles
+        for h in driver.window_handles[1:]:
+            driver.switch_to_window(h)
+            driver.close()
+        driver.switch_to_window(driver.window_handles[0])
+        job_iter = 0
+        page_iter = len(driver.find_elements_by_class_name('iaLabel'))
+    else:
+        jobs[job_iter].click()
+        timeout = 5
         try:
-            submit_job = driver.find_element_by_xpath('//*[@id="form-action-submit"]')
-            submit_job.click()
+            element_present = EC.presence_of_element_located((By.CLASS_NAME, 'indeed-apply-button-label'))
+            WebDriverWait(driver, timeout).until(element_present)
+            apply_button = driver.find_element_by_class_name('indeed-apply-button-label')
+            apply_button.click()
+            time.sleep(3)
+
+            driver.get('https://apply.indeed.com/indeedapply/s/resumeApply')
+            continue_button = driver.find_element_by_xpath('//*[@id="form-action-continue"]')
+            continue_button.click()
+            #driver.get('https://apply.indeed.com/indeedapply/s/resumeApply?page=1')
             time.sleep(2)
-            driver.execute_script("window.history.go(-3)")
-        except ElementNotInteractableException:
-            driver.execute_script("window.history.go(-2)")
-        job_iter = job_iter + 1
-    except TimeoutException:
-        print "Timed out waiting for page to load"
-        job_iter = job_iter + 1
+            try:
+                submit_job = driver.find_element_by_xpath('//*[@id="form-action-submit"]')
+                submit_job.click()
+                time.sleep(2)
+                driver.execute_script("window.history.go(-3)")
+            except ElementNotInteractableException:
+                driver.execute_script("window.history.go(-2)")
+            job_iter = job_iter + 1
+        except TimeoutException:
+            print "Timed out waiting for page to load"
+            job_iter = job_iter + 1
