@@ -1,18 +1,10 @@
-"""
-This sample demonstrates an implementation of the Lex Code Hook Interface
-in order to serve a sample bot which manages reservations for hotel rooms and car rentals.
-Bot, Intent, and Slot models which are compatible with this sample can be found in the Lex Console
-as part of the 'BookTrip' template.
-
-For instructions on how to set up and test this bot, as well as additional samples,
-visit the Lex Getting Started documentation http://docs.aws.amazon.com/lex/latest/dg/getting-started.html.
-"""
-
 import json
 import logging
 import os
 import time
+from collections import namedtuple
 
+import requests
 from sqlalchemy import create_engine, Column, Integer, Sequence, String
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
@@ -117,6 +109,31 @@ def elicit_intent(session_attributes, message=None):
         }
     return response
 
+def search_darcel(query):
+    DarcelLink = namedtuple('DarcelLink', ['name', 'url'])
+    url_str = 'https://askdarcel.org/resource?id={}'
+    darcel_resources = json.loads(requests.get('https://askdarcel.org/api/resources/search?lat=37.7749&long=-122.4194&query={}'.format(query)).content)['resources']
+    return [DarcelLink(name=x['name'], url=url_str.format(x['id'])) for x in darcel_resources]
+
+
+def indeed(intent_request):
+    session_attributes = intent_request['sessionAttributes'] if intent_request['sessionAttributes'] is not None else {}
+    phone_number = intent_request['userId']
+
+    session = Session()
+    user = session.query(User).filter_by(phone_number=phone_number).one_or_none()
+    if user is None:
+        return elicit_intent(session_attributes, message="Please register first. Type register")
+
+    if all(intent_request['currentIntent']['slots'].values()):
+        email_address = intent_request['currentIntent']['slots']['email_address']
+        password = intent_request['currentIntent']['slots']['password']
+        position = intent_request['currentIntent']['slots']['position']
+        # TODO: pass this to Fargate
+        return elicit_intent(session_attributes, message="You have been put in the queue for automatic job applications. Application confirmation emails for {} will arrive shortly to {}. Good luck!".format(position, email_address))
+    return delegate(session_attributes, intent_request['currentIntent']['slots'])
+
+
 def onboarding(intent_request):
     session_attributes = intent_request['sessionAttributes'] if intent_request['sessionAttributes'] is not None else {}
     phone_number = intent_request['userId']
@@ -140,6 +157,13 @@ def onboarding(intent_request):
         return close_empty(session_attributes, "Fulfilled")
     return delegate(session_attributes, intent_request['currentIntent']['slots'])
 
+def darcel(intent_request, query):
+    session_attributes = intent_request['sessionAttributes'] if intent_request['sessionAttributes'] is not None else {}
+    result = search_darcel(query)[0:5]
+    result_str = '\n'.join('{}: {}'.format(r.name, r.url) for r in result)
+    return close(session_attributes, "Fulfilled",
+                 "Here are some results:\n{}".format(result_str))
+
 
 # --- Intents ---
 
@@ -157,6 +181,12 @@ def dispatch(intent_request):
     # Dispatch to your bot's intent handlers
     if intent_name == 'Onboard':
         return onboarding(intent_request)
+    if intent_name == 'LinkedIn':
+        return indeed(intent_request)
+    if intent_name == 'DarcelHousing':
+        return darcel(intent_request, 'housing')
+    if intent_name == 'DarcelFood':
+        return darcel(intent_request, 'food')
 
     raise Exception('Intent with name ' + intent_name + ' not supported')
 
