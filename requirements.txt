@@ -1,3 +1,4 @@
 PyMySQL
 requests
 sqlalchemy==1.2.7
+security~=1.2.0+
