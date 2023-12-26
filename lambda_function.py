@@ -121,8 +121,7 @@ def indeed(intent_request):
     phone_number = intent_request['userId']
 
     session = Session()
-    user = session.query(User).filter_by(phone_number=phone_number).one_or_none()
-    if user is None:
+    if (user := session.query(User).filter_by(phone_number=phone_number).one_or_none()) is None:
         return elicit_intent(session_attributes, message="Please register first. Type register")
 
     if all(intent_request['currentIntent']['slots'].values()):
@@ -139,8 +138,7 @@ def onboarding(intent_request):
     phone_number = intent_request['userId']
 
     session = Session()
-    user = session.query(User).filter_by(phone_number=phone_number).one_or_none()
-    if user is not None:
+    if (user := session.query(User).filter_by(phone_number=phone_number).one_or_none()) is not None:
         return elicit_intent(session_attributes, message="Welcome back {}! If you want to apply to jobs type job.".format(user.first_name))
 
     if intent_request['currentIntent']['slots']['wants_to_enroll'] == 'No':
@@ -176,10 +174,9 @@ def dispatch(intent_request):
     logger.error(
         'dispatch userId={}, intentName={}'.format(intent_request['userId'], intent_request['currentIntent']['name']))
 
-    intent_name = intent_request['currentIntent']['name']
 
     # Dispatch to your bot's intent handlers
-    if intent_name == 'Onboard':
+    if (intent_name := intent_request['currentIntent']['name']) == 'Onboard':
         return onboarding(intent_request)
     if intent_name == 'LinkedIn':
         return indeed(intent_request)
