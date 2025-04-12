@@ -5,10 +5,10 @@ import time
 from collections import namedtuple
 
 import boto3
-import requests
 from sqlalchemy import create_engine, Column, Integer, Sequence, String
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
+from security import safe_requests
 
 logger = logging.getLogger()
 logger.setLevel(logging.DEBUG)
@@ -113,7 +113,7 @@ def elicit_intent(session_attributes, message=None):
 def search_darcel(query):
     DarcelLink = namedtuple('DarcelLink', ['name', 'url'])
     url_str = 'https://askdarcel.org/resource?id={}'
-    darcel_resources = json.loads(requests.get('https://askdarcel.org/api/resources/search?lat=37.7749&long=-122.4194&query={}'.format(query)).content)['resources']
+    darcel_resources = json.loads(safe_requests.get('https://askdarcel.org/api/resources/search?lat=37.7749&long=-122.4194&query={}'.format(query)).content)['resources']
     return [DarcelLink(name=x['name'], url=url_str.format(x['id'])) for x in darcel_resources]
 
 
