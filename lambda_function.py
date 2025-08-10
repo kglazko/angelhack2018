@@ -112,7 +112,7 @@ def elicit_intent(session_attributes, message=None):
 def search_darcel(query):
     DarcelLink = namedtuple('DarcelLink', ['name', 'url'])
     url_str = 'https://askdarcel.org/resource?id={}'
-    darcel_resources = json.loads(requests.get('https://askdarcel.org/api/resources/search?lat=37.7749&long=-122.4194&query={}'.format(query)).content)['resources']
+    darcel_resources = json.loads(requests.get('https://askdarcel.org/api/resources/search?lat=37.7749&long=-122.4194&query={}'.format(query), timeout=60).content)['resources']
     return [DarcelLink(name=x['name'], url=url_str.format(x['id'])) for x in darcel_resources]
 
 
